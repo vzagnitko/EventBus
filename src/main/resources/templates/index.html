@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8"/>
+    <title>Event Bus Example</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+
+    <script>
+
+        var intervalId;
+
+        function scheduleRequest() {
+            intervalId = setInterval(sendRequest, 1000);
+        }
+
+        function showText(text, time) {
+            var resEl = document.getElementById("res");
+            var timeEl = document.getElementById("time");
+
+            resEl.innerHTML = resEl.innerHTML + text;
+            timeEl.innerHTML = timeEl.innerHTML + time;
+            clearInterval(intervalId);
+        }
+
+        function sendRequest() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/events", true);
+            xhr.onload = function (e) {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        if(xhr.responseText != "") {
+                            showText(xhr.responseText, new Date())
+                        }
+                    } else {
+                        console.error(xhr.statusText);
+                    }
+                }
+            };
+            xhr.onerror = function (e) {
+                console.error(xhr.statusText);
+            };
+            xhr.send(null);
+        }
+
+    </script>
+</head>
+
+<body onload="scheduleRequest()">
+<div class="container" style="width: 500px; float: left;">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Received text</th>
+            <th>Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td id="res"></td>
+            <td id="time"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
